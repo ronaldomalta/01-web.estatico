@@ -1,0 +1,47 @@
+#cloud-config
+# Missão 3 - Ambiente de Observabilidade e Usuários
+package_update: true
+
+packages:
+  - docker.io
+  - git
+
+# Garante a existência do grupo antes de associar o novo usuário.
+groups:
+  - docker
+
+users:
+  - default
+  - name: aluno
+    gecos: Aluno do Laboratório DevOps
+    groups: [sudo, docker]
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+    shell: /bin/bash
+    lock_passwd: true
+
+write_files:
+  - path: /home/aluno/bem-vindo.txt
+    owner: root:root
+    permissions: '0644'
+    content: |
+      Bem-vindo ao Laboratório Prático de Cloud-init e Multipass!
+
+      Você está conectado como o usuário aluno.
+      Esta máquina foi configurada automaticamente com Cloud-init.
+
+      Ferramentas instaladas: Git e Docker.
+      Seu usuário participa dos grupos sudo e docker.
+      Painel Grafana: http://IP-DA-VM:3000
+
+      Comandos úteis:
+        whoami
+        groups
+        git --version
+        docker ps
+        sudo -n whoami
+        cat ~/bem-vindo.txt
+
+runcmd:
+  - systemctl enable --now docker
+  - chown -R aluno:aluno /home/aluno
+  - docker run -d --restart unless-stopped --name grafana -p 3000:3000 grafana/grafana:latest

@@ -1,0 +1,10 @@
+#cloud-config
+# Missão 2 - Container Automático
+package_update: true
+
+packages:
+  - docker.io
+
+runcmd:
+  - systemctl enable --now docker
+  - docker run -d --restart unless-stopped --name nginx-demo -p 8080:80 nginxdemos/hello
